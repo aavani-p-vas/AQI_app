@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict-AQI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        // JavaScript function to switch between sections
+        function showSection(sectionId) {
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('predict-section').style.display = 'none';
+            document.getElementById('about-section').style.display = 'none';
+            document.getElementById(sectionId).style.display = 'block';
+        }
+    </script>
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f8d0947c; /* Fallback color */
+    background-image: url('/static/images/background.jpg'); /* Correct relative path */
+    background-size: cover;
+    background-position: center;
+    color: #080202e7;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+ 
+header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+ /* The message box style */
+ .result-message {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background-color: #fcf157be;
+    color: #d7e77d;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: "Arial", sans-serif; /* Change font */
+    font-weight: bold; /* Add bold text */
+    display: none; /* Initially hidden */
+}
+
+/* Change the color and font when result is shown */
+.result-message.show-message {
+    display: block;
+    color: #1f54a3; /* Change text color */
+    font-family: "Verdana", sans-serif; /* Different font */
+    font-size: 16px; /* Increase font size */
+}
+
+.result-message.no-result {
+    display: block;
+    color: #6c757d; /* Grey color for "no result" */
+    font-family: "Times New Roman", serif; /* Different font */
+    font-size: 14px;
+}
+
+.logo {
+    width: 70px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-family: "Verdana", sans-serif;
+    color: #e60000;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+section {
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.664);
+    margin: 20px;
+    border: 1px solid #cccccca9;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    background-color: #e60000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #cc0000;
+}
+
+
+
+</style>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Air Quality Logo" class="logo">
+        <h1>Predict-AQI: Air Quality Prediction</h1>
+        <nav>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="showSection('home-section')">Home</a></li>
+                <li><a href="javascript:void(0)" onclick="showSection('predict-section')">Prediction</a></li>
+                <li><a href="javascript:void(0)" onclick="showSection('about-section')">About</a></li>
+            </ul>
+        </nav>
+        {% if prediction %}
+            <div class="result-message show-message">
+                Scroll down for the result
+            </div>
+        {% else %}
+            <div class="result-message no-result">
+                The result will be available after prediction
+            </div>
+        {% endif %}
+    </header>
+
+    <!-- Home Section -->
+    <section id="home-section">
+        
+        <h2>What is Air Pollution?</h2>
+
+    <p><strong>Air Pollution:</strong> Air pollution refers to the presence of harmful or excessive quantities of substances, including gases, particles, and biological molecules, in the Earth's atmosphere. These pollutants can cause various health issues, damage the environment, and contribute to climate change.</p>
+
+    <h3>Unit of Air Contents</h3>
+    <p>The concentration of air pollutants is typically measured in micrograms per cubic meter (<strong>µg/m<sup>3</sup></strong>) or parts per million (<strong>ppm</strong>). Different pollutants have varying levels of safe exposure limits based on international guidelines set by organizations such as the World Health Organization (WHO).</p>
+
+    <p>For example, particulate matter such as <strong>PM2.5</strong> (particles smaller than 2.5 micrometers) and <strong>PM10</strong> (particles smaller than 10 micrometers) are measured in µg/m<sup>3</sup>, while gases like <strong>NO<sub>2</sub></strong> (Nitrogen Dioxide) and <strong>CO</strong> (Carbon Monoxide) are measured in ppm.</p>
+
+    <h3>Causes of Air Pollution</h3>
+    <ul>
+        <li><strong>Vehicle Emissions:</strong> Exhaust from cars, trucks, and other vehicles contributes significantly to air pollution, releasing gases like CO, NO<sub>2</sub>, and particulate matter.</li>
+        <li><strong>Industrial Activity:</strong> Factories and power plants burn fossil fuels, emitting pollutants such as SO<sub>2</sub> (Sulfur Dioxide), CO<sub>2</sub> (Carbon Dioxide), and volatile organic compounds (VOCs).</li>
+        <li><strong>Agricultural Activities:</strong> The use of pesticides, fertilizers, and livestock farming releases pollutants like ammonia (NH<sub>3</sub>), methane (CH<sub>4</sub>), and nitrogen oxides.</li>
+        <li><strong>Household Combustion:</strong> Burning wood, coal, or other solid fuels in homes for cooking or heating releases particulate matter and carbon monoxide.</li>
+        <li><strong>Natural Causes:</strong> Natural events like wildfires, dust storms, and volcanic eruptions release large amounts of particulate matter and gases into the atmosphere.</li>
+    </ul>
+
+    <h2>Understanding AQI</h2>
+        <p>The Air Quality Index (AQI) is a number used to communicate how polluted the air currently is. It is calculated based on the levels of various pollutants such as PM2.5, PM10, NOx, and others. Below are the AQI buckets that describe air quality:</p>
+        <ul class="aqi-buckets">
+            <li>Good (0-50)</li>
+            <li>Satisfactory (51-100)</li>
+            <li>Moderate (101-200)</li>
+            <li>Poor (201-300)</li>
+            <li>Very Poor (301-400)</li>
+            <li>Severe (401+)</li>
+        </ul>
+        <h2>Air Quality Index (AQI) Categories</h2>
+
+        <p><strong>Good (0-50):</strong> Air quality is considered satisfactory, and air pollution poses little or no risk. This level is typically safe for all individuals, including sensitive groups.</p>
+    
+        <p><strong>Satisfactory (51-100):</strong> Air quality is acceptable, but there may be minor concerns for some people who are highly sensitive to air pollution. Most people will not experience any negative effects.</p>
+    
+        <p><strong>Moderate (101-200):</strong> The air quality is moderate and may pose a health concern for people who are sensitive to air pollution, especially those with pre-existing conditions. The general public is less likely to be affected.</p>
+    
+        <p><strong>Poor (201-300):</strong> Air quality has deteriorated, and there is a significant risk of health effects for sensitive groups, including children, the elderly, and people with respiratory or heart conditions. The general population may also experience adverse health effects.</p>
+    
+        <p><strong>Very Poor (301-400):</strong> Air quality is extremely poor, and everyone is at risk of experiencing health effects. Sensitive groups may experience severe health issues, and everyone should take precautionary measures.</p>
+    
+        <p><strong>Severe (401+):</strong> Air quality is hazardous, with a high likelihood of serious health effects for the entire population. Everyone should avoid outdoor activities, and sensitive individuals should seek medical advice.</p>
+
+        <h2>Pollutant Levels and Safe Exposure Limits(By WHO Air quality guidelines)</h2>
+        <style>
+            h3 {
+            color: red;
+        }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+            }
+            table, th, td {
+                border: 1px solid black;
+            }
+            th, td {
+                padding: 10px;
+                text-align: center;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+        </style>
+         
+    </head>
+    <body>
+    
+        <h3>Pollutant Levels and Safe Exposure Limits</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pollutant</th>
+                    <th>Annual Mean</th>
+                    <th>24-Hour Mean</th>
+                    <th>Short-Term/Other Mean</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Particulate Matter (PM2.5)</td>
+                    <td>5 µg/m³</td>
+                    <td>15 µg/m³</td>
+                    <td>Not to be exceeded more than 3-4 days/year</td>
+                </tr>
+                <tr>
+                    <td>Particulate Matter (PM10)</td>
+                    <td>15 µg/m³</td>
+                    <td>45 µg/m³</td>
+                    <td>Not to be exceeded more than 3-4 days/year</td>
+                </tr>
+                <tr>
+                    <td>Nitrogen Dioxide (NO₂)</td>
+                    <td>10 µg/m³</td>
+                    <td>25 µg/m³</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Sulfur Dioxide (SO₂)</td>
+                    <td></td>
+                    <td>40 µg/m³</td>
+                    <td>500 µg/m³ (10-minute mean)</td>
+                </tr>
+                <tr>
+                    <td>Carbon Monoxide (CO)</td>
+                    <td>4 mg/m³</td>
+                    <td>2 mg/m³</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Nitric Oxide (NO)</td>
+                    <td></td>
+                    <td></td>
+                    <td>25 ppm (occupational exposure limit)</td>
+                </tr>
+                <tr>
+                    <td>Nitrogen Oxides (NOx)</td>
+                    <td>40 µg/m³</td>
+                    <td></td>
+                    <td>200 µg/m³ (1-hour mean for NO₂)</td>
+                </tr>
+            </tbody>
+        </table>
+    
+
+
+    </section>
+
+    <!-- Prediction Section -->
+    <section id="predict-section" style="display: none;">
+        <h2>Predict Air Quality Index (AQI)</h2>
+        <form action="/predict" method="POST">
+            <label for="PM2.5">PM2.5 (μg/m³):</label>
+            <input type="text" name="PM2.5" required><br><br>
+            <label for="PM10">PM10 (μg/m³):</label>
+            <input type="text" name="PM10" required><br><br>
+            <label for="NO">NO (μg/m³):</label>
+            <input type="text" name="NO" required><br><br>
+            <label for="NO2">NO2 (μg/m³):</label>
+            <input type="text" name="NO2" required><br><br>
+            <label for="NOx">NOx (μg/m³):</label>
+            <input type="text" name="NOx" required><br><br>
+            <label for="CO">CO (μg/m³):</label>
+            <input type="text" name="CO" required><br><br>
+            <label for="SO2">SO2 (μg/m³):</label>
+            <input type="text" name="SO2" required><br><br>
+            <button type="submit">Predict</button>
+        </form>
+    </section>
+
+    <!-- Result Analysis Section -->
+    {% if prediction %}
+    <section id="result-analysis-section">
+        <h2>Prediction Result</h2>
+        <p><strong>Predicted AQI: </strong>{{ prediction }}</p>
+        <p><strong>Category: </strong>{{ aqi_category }}</p>
+        <p>{{ aqi_description }}</p>
+    </section>
+    {% endif %}
+
+    <!-- About Section -->
+    <section id="about-section" style="display: none;">
+        <h2>About Predict-AQI</h2>
+        <p>This web application allows users to estimate the Air Quality Index based on the concentration of different pollutants.</p>
+        <h3>Developer Information:</h3>
+        <p>Aavani P. Vas - <a href="mailto:aavanipvas@gmail.com">aavanipvas@gmail.com</a> | <a href="https://www.linkedin.com/in/aavani-p-vas-b5a702254/">LinkedIn</a></p>
+        <h3>Feedback:</h3>
+        <form>
+            <label>Rate this App:</label>
+            <select name="rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </section>
+
+    <footer>
+        <p style="text-align: center; font-size: 14px; font-family: 'Lucida Console', sans-serif; position: fixed;">
+            Developed by: Aavani P Vas
+        </p>   
+    </footer>
+</body>
+</html>

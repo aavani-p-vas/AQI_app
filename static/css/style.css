@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8d0947c; /* Fallback color */
+    background-image: url('/static/images/background.jpg'); /* Correct relative path */
+    background-size: cover;
+    background-position: center;
+    color: #080202e7;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+ 
+header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+ /* The message box style */
+ .result-message {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background-color: #fcf157be;
+    color: #d7e77d;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: "Arial", sans-serif; /* Change font */
+    font-weight: bold; /* Add bold text */
+    display: none; /* Initially hidden */
+}
+
+/* Change the color and font when result is shown */
+.result-message.show-message {
+    display: block;
+    color: #1f54a3; /* Change text color */
+    font-family: "Verdana", sans-serif; /* Different font */
+    font-size: 16px; /* Increase font size */
+}
+
+.result-message.no-result {
+    display: block;
+    color: #6c757d; /* Grey color for "no result" */
+    font-family: "Times New Roman", serif; /* Different font */
+    font-size: 14px;
+}
+
+.logo {
+    width: 70px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-family: "Verdana", sans-serif;
+    color: #e60000;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+section {
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.664);
+    margin: 20px;
+    border: 1px solid #cccccca9;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    background-color: #e60000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #cc0000;
+}
+
+
